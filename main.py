@@ -26,8 +26,8 @@ class Sprite:
     def draw(self, screen):
         screen.blit(self.image, self.rectangle)  # Draw sprite to screen
 
+    # Check for collision with another sprite
     def is_colliding(self, other_sprite):
-        # Check for collision with another sprite
         return pixel_collision(self.mask, self.rectangle, other_sprite.mask, other_sprite.rectangle)
 
 
@@ -40,7 +40,7 @@ class Player(Sprite):
         self.rectangle.center = new_position  # Update player's position
 
 
-# Enemy class with random speed, movement, and bounce behavior
+# Enemy class inherits the initial function from Sprite class.
 class Enemy(Sprite):
     def __init__(self, image, width, height):
         super().__init__(image)
@@ -48,8 +48,8 @@ class Enemy(Sprite):
         # Initialize enemy at a random position within screen bounds
         self.rectangle.center = (random.randint(0, width), random.randint(0, height))
 
+    #sets random speed for enemies.
     def Speed(self):
-        # Assign a random speed in x and y directions
         self.speed = [random.randint(-6, 6), random.randint(-6, 6)]
 
     def move(self):
@@ -63,7 +63,7 @@ class Enemy(Sprite):
             self.speed[1] = -self.speed[1]
 
 
-# PowerUp class for items the player can collect for bonuses
+# PowerUp class inherits functions from its parent class, Sprite class.
 class PowerUp(Sprite):
     def __init__(self, image, width, height):
         super().__init__(image)
@@ -109,7 +109,6 @@ class Shield(Sprite):
         self.rectangle.center = (random.randint(0, width), random.randint(0, height))
 
 
-
 # StartScreen class for displaying a "Game Start" message
 class StartScreen:
     def __init__(self, screen, width, height):
@@ -146,7 +145,8 @@ class GameOverScreen:
         pygame.time.wait(2000)  # Pause for 2 seconds before restarting or exiting
 
 
-# StageScreen class for displaying stage completion messages
+# StageScreen class for displaying stage completion messages.
+# Since this class is a separated class that is only for starting/ending screen, it does not inherit anything from Sprite class.
 class StageScreen:
     def __init__(self, screen, width, height):
         self.screen = screen
@@ -181,6 +181,7 @@ def main():
     # Game variables and objects
     myfont = pygame.font.SysFont('monospace', 24)
 
+    #gets images that are necessary for the gameplay.
     player_image = pygame.image.load("jerry.png").convert_alpha()
     player_image = pygame.transform.smoothscale(player_image, (70, 70))
 
@@ -204,6 +205,7 @@ def main():
     life = 3
     has_shield = False  # Track if player has an active shield
 
+    #produce enemies in range of 5 for normal enemies, and range 3 for platform enemies.
     enemy_sprites = [Enemy(random.choice([cat_image, dog_image]), width, height) for _ in range(5)]
     platform_enemies = [PlatformEnemy(platform_enemy_image, width, height) for _ in range(3)]
 
@@ -247,12 +249,12 @@ def main():
                 else:
                     life -= 0.1  # Reduce life if no shield
 
-        # Power-up collisions
+        # Check Power-up collisions
         for powerup in powerups:
             if powerup.is_colliding(player_sprite):
                 life += 1
 
-        # Check for player collisions with shields
+        # Shield collisions
         for shield in shields:
             if shield.is_colliding(player_sprite):
                 has_shield = True  # Activate shield on collision
@@ -270,7 +272,6 @@ def main():
             for platform_enemy in platform_enemies:
                 platform_enemy.move()
                 platform_enemy.bounce(width, height)
-
 
 
         # Occasionally spawn a new power-up
