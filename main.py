@@ -1,4 +1,4 @@
-# A5: An Avoider Game
+# A6: Extending the Avoider Game
 # By Yejin Jeon, Chanhee Yoo
 
 import pygame, sys, math, random, time
