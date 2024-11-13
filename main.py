@@ -3,7 +3,7 @@
 
 import pygame, sys, math, random, time
 
-# Function to test if two sprite masks overlap, indicating a collision
+# Test if two sprite masks overlap
 def pixel_collision(mask1, rect1, mask2, rect2):
     offset_x = rect2[0] - rect1[0]
     offset_y = rect2[1] - rect1[1]
@@ -14,28 +14,26 @@ def pixel_collision(mask1, rect1, mask2, rect2):
     else:
         return False
 
-# Basic Sprite class for drawable game objects with movement and collision handling
+# A basic Sprite class that can draw itself, move, and test collisions. Basically the same as
+# the Character example from class.
 class Sprite:
     def __init__(self, image):
         self.image = image
         self.rectangle = image.get_rect()
-        self.mask = pygame.mask.from_surface(image)  # Mask for precise collision detection
+        self.mask = pygame.mask.from_surface(image)
 
     def draw(self, screen):
-        screen.blit(self.image, self.rectangle)  # Draw sprite to screen
+        screen.blit(self.image, self.rectangle)
 
     def is_colliding(self, other_sprite):
-        # Check for collision with another sprite
         return pixel_collision(self.mask, self.rectangle, other_sprite.mask, other_sprite.rectangle)
 
-
-# Player class, derived from Sprite, with position-setting functionality
 class Player(Sprite):
     def __init__(self, image):
         super().__init__(image)
 
     def set_position(self, new_position):
-        self.rectangle.center = new_position   # Update player's position
+        self.rectangle.center = new_position
 
 # Enemy class with random starting position, speed, movement, and bounce handling
 class Enemy(Sprite):
@@ -47,62 +45,51 @@ class Enemy(Sprite):
         self.rectangle.center = (random.randint(0, width), random.randint(0,height))
 
     def Speed(self):
-        # Assign a random speed in x and y directions
         self.speed = [random.randint(-6, 6), random.randint(-6, 6)]
 
     def move(self):
-        self.rectangle.move_ip(*self.speed)    # Move enemy based on speed
+        self.rectangle.move_ip(*self.speed)
 
     def bounce(self, width, height):
         print("need to implement bounce!")
-        # Reverse direction if hitting screen boundaries (bounce effect)
         if self.rectangle.left <= 0 or self.rectangle.right >= width:
             self.speed[0] = -self.speed[0]
         if self.rectangle.top <= 0 or self.rectangle.bottom >= height:
             self.speed[1] = -self.speed[1]
 
-
-# PowerUp class for items the player can collect for bonuses
+# PowerUp class with a fixed position, collision detection, and drawing capabilities
 class PowerUp(Sprite):
     def __init__(self, image, width, height):
         super().__init__(image)
         self.rectangle.center = (random.randint(0, width), random.randint(0, height))
 
-
-# PlatformEnemy class, a type of Enemy that only moves horizontally
 class PlatformEnemy(Enemy):
     def __init__(self, image, width, height):
         super().__init__(image, width, height)
 
         self.speed[1] = 0
 
-
-# RotatingPowerUp class for rotating collectibles that can be drawn on screen
 class RotatingPowerUp(PowerUp):
     def __init__(self, image, width, height):
         super().__init__(image, width, height)
         
-        self.angle = 0  # Initialize rotation angle
-        self.original_image = self.image  # Store original image for rotation
+        self.angle = 0 
+        self.original_image = self.image
         
     def draw(self, screen):
-        # Rotate image by updating angle and reset mask and rectangle for new position
         self.angle += 5 
         rotated_image = pygame.transform.rotate(self.original_image, self.angle)
         self.image = rotated_image
-
-        # Maintain current center while updating rotated image rect
+        
         current_center = self.rect.center
         self.rect = self.image.get_rect(center = current_center)
-
-        # Update mask for accurate collision after rotation
+        
         self.mask = pygame.mask.from_surface(self.image)
         
-        super().draw(screen)  # Draw the rotated image to the screen
+        super().draw(screen)
 
 
-
-# Shield class grants temporary protection to the player when collected
+# Shield class for temporary protection, granting invincibility to the player upon collection
 class Shield(Sprite):
     def __init__(self, image, width, height):
         self.image = image
@@ -112,7 +99,7 @@ class Shield(Sprite):
         self.rectangle.center = (random.randint(0, width), random.randint(0, height))
 
     def draw(self, screen):
-        screen.blit(self.image, self.rectangle)   # Draw shield to the screen
+        screen.blit(self.image, self.rectangle)
 
 
 # StartScreen class to display a "Game Start" message at the beginning
