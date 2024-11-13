@@ -203,6 +203,8 @@ def main():
     platform_enemy_image = pygame.image.load("duck.png").convert_alpha()
     platform_enemy_image = pygame.transform.smoothscale(platform_enemy_image, (70, 70))
 
+    rotating_powerup_image = pygame.image.load("fork.png").convert_alpha()
+    rotating_powerup_image = pygame.transform.smoothscale(powerup_image, (60, 60))
 
     player_sprite = Player(player_image)
     life = 3
