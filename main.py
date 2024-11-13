@@ -33,9 +33,10 @@ class Sprite:
 
 class Player(Sprite):
     def __init__(self, image):
-        super().__init__(self, image)
+        super().__init__(image)
 
-    def set_position(self):
+    def set_position(self, new_position):
+        self.rectangle.center = new_position
 
 # Enemy class with random starting position, speed, movement, and bounce handling
 class Enemy(Sprite):
@@ -52,6 +53,9 @@ class Enemy(Sprite):
         vy = random.randint(-6, 6)
 
         self.speed = (vx, vy)
+
+    def speed(self):
+
 
     def move(self):
         print("need to implement move!")
@@ -95,13 +99,6 @@ class Enemy(Sprite):
 
         # Update the speed with any changes
         self.speed = (vx, vy)
-
-    def check_collision(self, other_rect):
-        # Checks for collision with another rectangle
-        return self.rectangle.colliderect(other_rect)
-
-    def draw(self, screen):
-        screen.blit(self.image, self.rectangle)
 
 # PowerUp class with a fixed position, collision detection, and drawing capabilities
 class PowerUp(Sprite):
