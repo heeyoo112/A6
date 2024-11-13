@@ -92,8 +92,8 @@ class RotatingPowerUp(PowerUp):
         self.image = rotated_image
 
         # Maintain current center while updating rotated image rect
-        current_center = self.rect.center
-        self.rect = self.image.get_rect(center=current_center)
+        current_center = self.rectangle.center
+        self.rectangle = self.image.get_rect(center=current_center)
 
         # Update mask for accurate collision after rotation
         self.mask = pygame.mask.from_surface(self.image)
