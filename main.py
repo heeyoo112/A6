@@ -28,12 +28,12 @@ class Sprite:
     def draw(self, screen):
         screen.blit(self.image, self.rectangle)
 
-    def is_colliding(self, other_sprite):
+    def check_collision(self, other_sprite):
         return pixel_collision(self.mask, self.rectangle, other_sprite.mask, other_sprite.rectangle)
 
 
 # Enemy class with random starting position, speed, movement, and bounce handling
-class Enemy:
+class Enemy(Sprite):
     def __init__(self, image, width, height):
         self.image = image
         self.mask = pygame.mask.from_surface(image)
@@ -98,9 +98,11 @@ class Enemy:
     def draw(self, screen):
         screen.blit(self.image, self.rectangle)
 
+class Player(Sprite):
+    def __init__(self):
 
 # PowerUp class with a fixed position, collision detection, and drawing capabilities
-class PowerUp:
+class PowerUp(Sprite):
     def __init__(self, image, width, height):
         self.image = image
         self.mask = pygame.mask.from_surface(image)
@@ -116,6 +118,10 @@ class PowerUp:
     def draw(self, screen):
         # Same as Sprite
         screen.blit(self.image, self.rectangle)
+
+class PlatformEnemy(Enemy):
+
+class RotatingPowerUp(PowerUp):
 
 
 # Shield class for temporary protection, granting invincibility to the player upon collection
