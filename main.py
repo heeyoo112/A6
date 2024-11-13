@@ -22,9 +22,6 @@ class Sprite:
         self.rectangle = image.get_rect()
         self.mask = pygame.mask.from_surface(image)
 
-    # def set_position(self, new_position):
-    #     self.rectangle.center = new_position
-
     def draw(self, screen):
         screen.blit(self.image, self.rectangle)
 
@@ -41,82 +38,30 @@ class Player(Sprite):
 # Enemy class with random starting position, speed, movement, and bounce handling
 class Enemy(Sprite):
     def __init__(self, image, width, height):
-        self.image = image
-        self.mask = pygame.mask.from_surface(image)
+        super().__init__(image)
         self.rectangle = image.get_rect()
-
+        self.Speed()
         # Initialize enemy at a random position within screen bounds
         self.rectangle.center = (random.randint(0, width), random.randint(0,height))
 
-        # Random speed (vx, vy) with possible negative/positive values
-        vx = random.randint(-6, 6)
-        vy = random.randint(-6, 6)
-
-        self.speed = (vx, vy)
-
-    def speed(self):
-
+    def Speed(self):
+        self.speed = [random.randint(-6, 6), random.randint(-6, 6)]
 
     def move(self):
-        print("need to implement move!")
-
-        # Move enemy by speed (vx, vy)
-        vx, vy = self.speed
-        self.rectangle.move_ip(vx,vy)
+        self.rectangle.move_ip(*self.speed)
 
     def bounce(self, width, height):
         print("need to implement bounce!")
-        # Check screen boundaries and bounce if needed
-        vx, vy = self.speed
-
-        # Check if the enemy is hitting the left side of the screen
-        if self.rectangle.left < 0:
-            # Reverse x direction to "bounce" off the left edge
-            vx = -vx
-            # Move the rectangle back within the screen bounds
-            self.rectangle.left = 0
-
-        # Check if the enemy is hitting the right side of the screen
-        if self.rectangle.right > width:
-            # Reverse x direction to "bounce" off the right edge
-            vx = -vx
-            # Move the rectangle back within the screen bounds
-            self.rectangle.right = width
-
-        # Check if the enemy is hitting the top of the screen
-        if self.rectangle.top < 0:
-            # Reverse y direction to "bounce" off the top edge
-            vy = -vy
-            # Move the rectangle back within the screen bounds
-            self.rectangle.top = 0
-
-        # Check if the enemy is hitting the bottom of the screen
-        if self.rectangle.bottom > height:
-            # Reverse y direction to "bounce" off the bottom edge
-            vy = -vy
-            # Move the rectangle back within the screen bounds
-            self.rectangle.bottom = height
-
-        # Update the speed with any changes
-        self.speed = (vx, vy)
+        if self.rectangle.left <= 0 or self.rectangle.right >= width:
+            self.speed[0] = -self.speed[0]
+        if self.rectangle.top <= 0 or self.rectangle.bottom >= height:
+            self.speed[1] = -self.speed[1]
 
 # PowerUp class with a fixed position, collision detection, and drawing capabilities
 class PowerUp(Sprite):
     def __init__(self, image, width, height):
-        self.image = image
-        self.mask = pygame.mask.from_surface(image)
-        self.rectangle = image.get_rect()
-
-        # Position powerup randomly within screen bounds
+        super().__init__(image)
         self.rectangle.center = (random.randint(0, width), random.randint(0, height))
-
-    def check_collision(self, other_rect):
-        # Checks for collision with another rectangle
-        return self.rectangle.colliderect(other_rect)
-
-    def draw(self, screen):
-        # Same as Sprite
-        screen.blit(self.image, self.rectangle)
 
 class PlatformEnemy(Enemy):
     def __init__(self, image_path, width, height):
@@ -128,16 +73,13 @@ class RotatingPowerUp(PowerUp):
 
 
 # Shield class for temporary protection, granting invincibility to the player upon collection
-class Shield:
+class Shield(Sprite):
     def __init__(self, image, width, height):
         self.image = image
         self.mask = pygame.mask.from_surface(image)
         self.rectangle = image.get_rect()
         # Random initial position on screen
         self.rectangle.center = (random.randint(0, width), random.randint(0, height))
-
-    def check_collision(self, other_rect):
-        return self.rectangle.colliderect(other_rect)
 
     def draw(self, screen):
         screen.blit(self.image, self.rectangle)
@@ -273,7 +215,7 @@ def main():
 
         # Enemy collisions
         for enemy in enemy_sprites:
-            if enemy.check_collision(player_sprite.rectangle):
+            if enemy.is_colliding(player_sprite.rectangle):
                 if has_shield:
                     # Use up shield on first collision
                     has_shield = False
