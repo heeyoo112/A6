@@ -204,7 +204,7 @@ def main():
     platform_enemy_image = pygame.transform.smoothscale(platform_enemy_image, (70, 70))
 
     rotating_powerup_image = pygame.image.load("fork.png").convert_alpha()
-    rotating_powerup_image = pygame.transform.smoothscale(rotating_powerup_image, (60, 60))
+    rotating_powerup_image = pygame.transform.smoothscale(powerup_image, (60, 60))
 
     player_sprite = Player(player_image)
     life = 3
@@ -213,8 +213,6 @@ def main():
     #produce enemies in range of 5 for normal enemies, and range 3 for platform enemies.
     enemy_sprites = [Enemy(random.choice([cat_image, dog_image]), width, height) for _ in range(5)]
     platform_enemies = [PlatformEnemy(platform_enemy_image, width, height) for _ in range(3)]
-
-
 
     powerups = []
     shields = []
@@ -280,11 +278,13 @@ def main():
                 platform_enemy.move()
                 platform_enemy.bounce(width, height)
 
-        # Occasionally spawn a new power-up or rotating power-up
+
+        # Occasionally spawn a new power-up
         if random.randint(0, 150) < 2:
-                    powerups.append(PowerUp(powerup_image, width, height))
-        if random.randint(0, 300) < 1:
-                    powerups.append(RotatingPowerUp(rotating_powerup_image, width, height))
+            powerups.append(PowerUp(powerup_image, width, height))
+
+        if random.randint(0, 300) < 1:  # Lower chance to spawn rotating power-up
+            powerups.append(RotatingPowerUp(powerup_image, width, height))
 
         # Occasionally spawn new shield
         if random.randint(0, 300) < 1:
