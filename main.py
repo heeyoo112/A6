@@ -61,7 +61,8 @@ class Enemy(Sprite):
 class PowerUp(Sprite):
     def __init__(self, image, width, height):
         super().__init__(image)
-        self.rectangle.center = (random.randint(0, width), random.randint(0, height))
+        self.rect = self.image.get_rect()
+        self.rect.center = (random.randint(0, width), random.randint(0, height))
 
 class PlatformEnemy(Enemy):
     def __init__(self, image, width, height):
@@ -72,7 +73,6 @@ class PlatformEnemy(Enemy):
 class RotatingPowerUp(PowerUp):
     def __init__(self, image, width, height):
         super().__init__(image, width, height)
-        
         self.angle = 0 
         self.original_image = self.image
         
@@ -232,7 +232,7 @@ def main():
 
         # Enemy collisions
         for enemy in enemy_sprites:
-            if enemy.is_colliding(player_sprite.rectangle):
+            if enemy.is_colliding(player_sprite):
                 if has_shield:
                     # Use up shield on first collision
                     has_shield = False
@@ -241,17 +241,17 @@ def main():
 
         # Power-up collisions
         for powerup in powerups:
-            if powerup.check_collision(player_sprite.rectangle):
+            if powerup.is_colliding(player_sprite):
                 life += 1
 
         # Check for player collisions with shields
         for shield in shields:
-            if shield.check_collision(player_sprite.rectangle):
+            if shield.is_colliding(player_sprite):
                 has_shield = True  # Activate shield on collision
                 shields.remove(shield)  # Remove shield after collection
 
         # Remove collected power-ups
-        powerups = [p for p in powerups if not p.check_collision(player_sprite.rectangle)]
+        powerups = [p for p in powerups if not p.is_colliding(player_sprite)]
 
         # Move and bounce enemies
         for enemy in enemy_sprites:
