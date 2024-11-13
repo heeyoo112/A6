@@ -57,18 +57,17 @@ class Enemy(Sprite):
         if self.rectangle.top <= 0 or self.rectangle.bottom >= height:
             self.speed[1] = -self.speed[1]
 
+class PlatformEnemy(Enemy):
+    def __init__(self, image, width, height):
+        super().__init__(image, width, height)
+        self.speed[1] = 0
+
 # PowerUp class with a fixed position, collision detection, and drawing capabilities
 class PowerUp(Sprite):
     def __init__(self, image, width, height):
         super().__init__(image)
         self.rect = self.image.get_rect()
         self.rect.center = (random.randint(0, width), random.randint(0, height))
-
-class PlatformEnemy(Enemy):
-    def __init__(self, image, width, height):
-        super().__init__(image, width, height)
-
-        self.speed[1] = 0
 
 class RotatingPowerUp(PowerUp):
     def __init__(self, image, width, height):
@@ -97,9 +96,6 @@ class Shield(Sprite):
         self.rectangle = image.get_rect()
         # Random initial position on screen
         self.rectangle.center = (random.randint(0, width), random.randint(0, height))
-
-    def draw(self, screen):
-        screen.blit(self.image, self.rectangle)
 
 
 # StartScreen class to display a "Game Start" message at the beginning
