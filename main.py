@@ -22,15 +22,20 @@ class Sprite:
         self.rectangle = image.get_rect()
         self.mask = pygame.mask.from_surface(image)
 
-    def set_position(self, new_position):
-        self.rectangle.center = new_position
+    # def set_position(self, new_position):
+    #     self.rectangle.center = new_position
 
     def draw(self, screen):
         screen.blit(self.image, self.rectangle)
 
-    def check_collision(self, other_sprite):
+    def is_colliding(self, other_sprite):
         return pixel_collision(self.mask, self.rectangle, other_sprite.mask, other_sprite.rectangle)
 
+class Player(Sprite):
+    def __init__(self, image):
+        super().__init__(self, image)
+
+    def set_position(self):
 
 # Enemy class with random starting position, speed, movement, and bounce handling
 class Enemy(Sprite):
@@ -97,9 +102,6 @@ class Enemy(Sprite):
 
     def draw(self, screen):
         screen.blit(self.image, self.rectangle)
-
-class Player(Sprite):
-    def __init__(self):
 
 # PowerUp class with a fixed position, collision detection, and drawing capabilities
 class PowerUp(Sprite):
