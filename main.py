@@ -67,8 +67,9 @@ class Enemy(Sprite):
 class PowerUp(Sprite):
     def __init__(self, image, width, height):
         super().__init__(image)
-        # Random initial position on the screen for the PowerUp
-        self.rectangle.center = (random.randint(0, width), random.randint(0, height))
+        # Set a random initial position each time a PowerUp is created
+        self.rect = self.image.get_rect()
+        self.rect.center = (random.randint(0, width), random.randint(0, height))
 
 
 # PlatformEnemy class, a type of Enemy that only moves horizontally
