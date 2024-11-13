@@ -77,6 +77,9 @@ class PlatformEnemy(Enemy):
         super().__init__(image, width, height)
         self.speed[1] = 0  # Set vertical speed to 0 for horizontal movement only
 
+        # Set horizontal speed (vx) to a random non-zero value to ensure movement
+        self.speed[0] = random.choice([-5, -4, -3, 3, 4, 5])
+
 
 # RotatingPowerUp class for rotating collectibles that can be drawn on screen
 class RotatingPowerUp(PowerUp):
