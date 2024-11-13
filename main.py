@@ -119,6 +119,10 @@ class PowerUp(Sprite):
         screen.blit(self.image, self.rectangle)
 
 class PlatformEnemy(Enemy):
+    def __init__(self, image_path, width, height):
+        super().__init__(image_path, width, height)
+
+        self.speed[1] = 0
 
 class RotatingPowerUp(PowerUp):
 
@@ -209,21 +213,33 @@ def main():
 
     # Game variables and objects
     myfont = pygame.font.SysFont('monospace', 24)
+
     player_image = pygame.image.load("jerry.png").convert_alpha()
     player_image = pygame.transform.smoothscale(player_image, (70, 70))
+
     cat_image = pygame.image.load("tom.png").convert_alpha()
     cat_image = pygame.transform.smoothscale(cat_image, (70, 70))
+
     dog_image = pygame.image.load("dog.png").convert_alpha()
     dog_image = pygame.transform.smoothscale(dog_image, (70, 70))
+
     powerup_image = pygame.image.load("cheese.png").convert_alpha()
     powerup_image = pygame.transform.smoothscale(powerup_image, (60, 60))
+
     star_image = pygame.image.load("star.png").convert_alpha()
     star_image = pygame.transform.smoothscale(star_image, (60, 60))
+
+    platform_enemy_image = pygame.image.load("duck.png").convert_alpha()
+    platform_enemy_image = pygame.transform.smoothscale(platform_enemy_image, (70, 70)
+
 
     player_sprite = Sprite(player_image)
     life = 3
     has_shield = False  # Track if player has an active shield
+
     enemy_sprites = [Enemy(random.choice([cat_image, dog_image]), width, height) for _ in range(5)]
+    platform_enemies = [PlatformEnemy(platform_enemy_image, width, height) for _ in range(3)]
+
     powerups = []
     shields = []
 
