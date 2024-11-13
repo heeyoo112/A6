@@ -122,12 +122,29 @@ class PowerUp(Sprite):
         screen.blit(self.image, self.rectangle)
 
 class PlatformEnemy(Enemy):
-    def __init__(self, image_path, width, height):
-        super().__init__(image_path, width, height)
+    def __init__(self, image, width, height):
+        super().__init__(image, width, height)
 
         self.speed[1] = 0
 
 class RotatingPowerUp(PowerUp):
+    def __init__(self, image, width, height):
+        super().__init__(image, width, height)
+        
+        self.angle = 0 
+        self.original_image = self.image
+        
+    def draw(self, screen):
+        self.angle += 5 
+        rotated_image = pygame.transform.rotate(self.original_image, self.angle)
+        self.image = rotated_image
+        
+        current_center = self.rect.center
+        self.rect = self.image.get_rect(center = current_center)
+        
+        self.mask = pygame.mask.from_surface(self.image)
+        
+        super().draw(screen)
 
 
 # Shield class for temporary protection, granting invincibility to the player upon collection
@@ -302,17 +319,33 @@ def main():
             enemy.move()
             enemy.bounce(width, height)
 
+            # Move and bounce platform enemies
+            for platform_enemy in platform_enemies:
+                platform_enemy.move()
+                platform_enemy.bounce(width, height)
+
+
         # Occasionally spawn new power-up
         if random.randint(0, 150) < 2:
             powerups.append(PowerUp(powerup_image, width, height))
+
+        if random.randint(0, 300) < 1:  # Lower chance to spawn rotating power-up
+            powerups.append(RotatingPowerUp(powerup_image, width, height))
+
         if random.randint(0, 300) < 1: #0.33 probability
             shields.append(Shield(star_image, width, height))
 
         # Render the game
         screen.fill((0, 100, 50))
         player_sprite.draw(screen)
+
+        # Draw all enemies and platform enemies
         for enemy in enemy_sprites:
             enemy.draw(screen)
+        for platform_enemy in platform_enemies:
+            platform_enemy.draw(screen)
+
+        # Draw all power-ups and shields
         for powerup in powerups:
             powerup.draw(screen)
         for shield in shields:
