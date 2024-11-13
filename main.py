@@ -68,8 +68,7 @@ class PowerUp(Sprite):
     def __init__(self, image, width, height):
         super().__init__(image)
         # Set a random initial position each time a PowerUp is created
-        self.rect = self.image.get_rect()
-        self.rect.center = (random.randint(0, width), random.randint(0, height))
+        self.rectangle.center = (random.randint(0, width), random.randint(0, height))
 
 
 # PlatformEnemy class, a type of Enemy that only moves horizontally
@@ -105,14 +104,10 @@ class RotatingPowerUp(PowerUp):
 # Shield class grants temporary protection to the player when collected
 class Shield(Sprite):
     def __init__(self, image, width, height):
-        self.image = image
-        self.mask = pygame.mask.from_surface(image)
-        self.rectangle = image.get_rect()
+        super().__init__(image)
         # Position shield at a random location on the screen
         self.rectangle.center = (random.randint(0, width), random.randint(0, height))
 
-    def draw(self, screen):
-        screen.blit(self.image, self.rectangle)  # Draw shield to the screen
 
 
 # StartScreen class for displaying a "Game Start" message
@@ -277,14 +272,16 @@ def main():
                 platform_enemy.bounce(width, height)
 
 
-        # Occasionally spawn new power-up
+
+        # Occasionally spawn a new power-up
         if random.randint(0, 150) < 2:
             powerups.append(PowerUp(powerup_image, width, height))
 
         if random.randint(0, 300) < 1:  # Lower chance to spawn rotating power-up
             powerups.append(RotatingPowerUp(powerup_image, width, height))
 
-        if random.randint(0, 300) < 1: #0.33 probability
+        # Occasionally spawn new shield
+        if random.randint(0, 300) < 1:
             shields.append(Shield(star_image, width, height))
 
         # Render the game
