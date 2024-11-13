@@ -189,10 +189,10 @@ def main():
     star_image = pygame.transform.smoothscale(star_image, (60, 60))
 
     platform_enemy_image = pygame.image.load("duck.png").convert_alpha()
-    platform_enemy_image = pygame.transform.smoothscale(platform_enemy_image, (70, 70)
+    platform_enemy_image = pygame.transform.smoothscale(platform_enemy_image, (70, 70))
 
 
-    player_sprite = Sprite(player_image)
+    player_sprite = Player(player_image)
     life = 3
     has_shield = False  # Track if player has an active shield
 
