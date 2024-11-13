@@ -3,102 +3,118 @@
 
 import pygame, sys, math, random, time
 
-# Test if two sprite masks overlap
+
+# Function to test if two sprite masks overlap, indicating a collision
 def pixel_collision(mask1, rect1, mask2, rect2):
     offset_x = rect2[0] - rect1[0]
     offset_y = rect2[1] - rect1[1]
-    # See if the two masks at the offset are overlapping.
+    # Check if the two masks overlap with the calculated offset
     overlap = mask1.overlap(mask2, (offset_x, offset_y))
     if overlap:
         return True
     else:
         return False
 
-# A basic Sprite class that can draw itself, move, and test collisions. Basically the same as
-# the Character example from class.
+
+# Basic Sprite class for drawable game objects with movement and collision handling
 class Sprite:
     def __init__(self, image):
         self.image = image
         self.rectangle = image.get_rect()
-        self.mask = pygame.mask.from_surface(image)
+        self.mask = pygame.mask.from_surface(image)  # Mask for precise collision detection
 
     def draw(self, screen):
-        screen.blit(self.image, self.rectangle)
+        screen.blit(self.image, self.rectangle)  # Draw sprite to screen
 
     def is_colliding(self, other_sprite):
+        # Check for collision with another sprite
         return pixel_collision(self.mask, self.rectangle, other_sprite.mask, other_sprite.rectangle)
 
+
+# Player class, derived from Sprite, with position-setting functionality
 class Player(Sprite):
     def __init__(self, image):
         super().__init__(image)
 
     def set_position(self, new_position):
-        self.rectangle.center = new_position
+        self.rectangle.center = new_position  # Update player's position
 
-# Enemy class with random starting position, speed, movement, and bounce handling
+
+# Enemy class with random speed, movement, and bounce behavior
 class Enemy(Sprite):
     def __init__(self, image, width, height):
         super().__init__(image)
-        self.rectangle = image.get_rect()
         self.Speed()
         # Initialize enemy at a random position within screen bounds
-        self.rectangle.center = (random.randint(0, width), random.randint(0,height))
+        self.rectangle.center = (random.randint(0, width), random.randint(0, height))
 
     def Speed(self):
+        # Assign a random speed in x and y directions
         self.speed = [random.randint(-6, 6), random.randint(-6, 6)]
 
     def move(self):
-        self.rectangle.move_ip(*self.speed)
+        self.rectangle.move_ip(*self.speed)  # Move enemy based on speed
 
     def bounce(self, width, height):
-        print("need to implement bounce!")
+        # Reverse direction if hitting screen boundaries (bounce effect)
         if self.rectangle.left <= 0 or self.rectangle.right >= width:
             self.speed[0] = -self.speed[0]
         if self.rectangle.top <= 0 or self.rectangle.bottom >= height:
             self.speed[1] = -self.speed[1]
 
-class PlatformEnemy(Enemy):
-    def __init__(self, image, width, height):
-        super().__init__(image, width, height)
-        self.speed[1] = 0
 
-# PowerUp class with a fixed position, collision detection, and drawing capabilities
+# PowerUp class for items the player can collect for bonuses
 class PowerUp(Sprite):
     def __init__(self, image, width, height):
         super().__init__(image)
+        # Random initial position on the screen for the PowerUp
         self.rectangle.center = (random.randint(0, width), random.randint(0, height))
 
+
+# PlatformEnemy class, a type of Enemy that only moves horizontally
+class PlatformEnemy(Enemy):
+    def __init__(self, image, width, height):
+        super().__init__(image, width, height)
+        self.speed[1] = 0  # Set vertical speed to 0 for horizontal movement only
+
+
+# RotatingPowerUp class for rotating collectibles that can be drawn on screen
 class RotatingPowerUp(PowerUp):
     def __init__(self, image, width, height):
         super().__init__(image, width, height)
-        
-        self.angle = 0 
-        self.original_image = self.image
-        
+        self.angle = 0  # Initialize rotation angle
+        self.original_image = self.image  # Store original image for rotation
+
     def draw(self, screen):
-        self.angle += 5 
+        # Rotate image by updating angle and reset mask and rectangle for new position
+        self.angle += 5
         rotated_image = pygame.transform.rotate(self.original_image, self.angle)
         self.image = rotated_image
-        
+
+        # Maintain current center while updating rotated image rect
         current_center = self.rect.center
-        self.rect = self.image.get_rect(center = current_center)
-        
+        self.rect = self.image.get_rect(center=current_center)
+
+        # Update mask for accurate collision after rotation
         self.mask = pygame.mask.from_surface(self.image)
-        
-        super().draw(screen)
+
+        super().draw(screen)  # Draw the rotated image to the screen
 
 
-# Shield class for temporary protection, granting invincibility to the player upon collection
+# Shield class grants temporary protection to the player when collected
 class Shield(Sprite):
     def __init__(self, image, width, height):
         self.image = image
         self.mask = pygame.mask.from_surface(image)
         self.rectangle = image.get_rect()
-        # Random initial position on screen
+        # Position shield at a random location on the screen
         self.rectangle.center = (random.randint(0, width), random.randint(0, height))
 
+    def draw(self, screen):
+        screen.blit(self.image, self.rectangle)  # Draw shield to the screen
 
-# StartScreen class to display a "Game Start" message at the beginning
+
+# StartScreen class for displaying a "Game Start" message
 class StartScreen:
     def __init__(self, screen, width, height):
         self.screen = screen
@@ -108,15 +124,15 @@ class StartScreen:
         self.message = self.font.render("Game Start!", True, (255, 255, 255))
 
     def display(self):
-        # Displays the start message on the screen
+        # Displays the start message in the center of the screen
         self.screen.fill((0, 0, 0))
         text_rect = self.message.get_rect(center=(self.width // 2, self.height // 2))
         self.screen.blit(self.message, text_rect)
         pygame.display.flip()
-        pygame.time.wait(2000)
+        pygame.time.wait(2000)  # Pause for 2 seconds before proceeding
 
 
-# GameOverScreen class to display a "Game Over" message at the end
+# GameOverScreen class for displaying a "Game Over" message
 class GameOverScreen:
     def __init__(self, screen, width, height):
         self.screen = screen
@@ -126,15 +142,15 @@ class GameOverScreen:
         self.message = self.font.render("Game Over", True, (255, 0, 0))
 
     def display(self):
-        # Displays the game over message on the screen
+        # Displays the game over message in the center of the screen
         self.screen.fill((0, 0, 0))
         text_rect = self.message.get_rect(center=(self.width // 2, self.height // 2))
         self.screen.blit(self.message, text_rect)
         pygame.display.flip()
-        pygame.time.wait(2000)
+        pygame.time.wait(2000)  # Pause for 2 seconds before restarting or exiting
 
 
-# StageScreen class to display messages upon completing each stage
+# StageScreen class for displaying stage completion messages
 class StageScreen:
     def __init__(self, screen, width, height):
         self.screen = screen
@@ -143,13 +159,13 @@ class StageScreen:
         self.font = pygame.font.SysFont('monospace', 36)
 
     def display(self, message):
-        # Displays the stage completion message
+        # Displays a custom stage message in the center of the screen
         self.screen.fill((0, 0, 0))
         text_surface = self.font.render(message, True, (255, 255, 255))
         text_rect = text_surface.get_rect(center=(self.width // 2, self.height // 2))
         self.screen.blit(text_surface, text_rect)
         pygame.display.flip()
-        pygame.time.wait(2000)
+        pygame.time.wait(2000)  # Pause for 2 seconds before continuing to the next stage
 
 
 # Main game function
